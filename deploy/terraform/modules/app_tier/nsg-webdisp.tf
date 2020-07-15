@@ -3,7 +3,7 @@ resource "azurerm_network_security_group" "nsg-web" {
   count               = local.enable_deployment && local.sub_web_defined ? (local.sub_web_nsg_exists ? 0 : 1) : 0
   name                = local.sub_app_nsg_name
   location            = var.vnet-sap[0].location
-  resource_group_name = var.vnet-sap[0].name
+  resource_group_name = var.vnet-sap[0].resource_group_name
 }
 
 # Imports the SAP web subnet nsg data
