@@ -149,7 +149,7 @@ resource "azurerm_lb" "web" {
 
   frontend_ip_configuration {
     name                          = "sap${lower(local.application_sid)}web"
-    subnet_id                     = local.sub_web_defined ? local.sub_web_exists ? data.azurerm_subnet.subnet-sap-web[0].id : azurerm_subnet.subnet-sap-web[0].id : local.sub_app_exists ? data.azurerm_subnet.subnet-sap-app[0].id : azurerm_subnet.subnet-sap-app[0].id
+    subnet_id                     = sub_web_deployed.id
     private_ip_address_allocation = "Static"
     private_ip_address            = cidrhost( local.sub_web_defined ? local.sub_web_prefix : local.sub_app_prefix, local.ip_offsets.web_lb )
   }

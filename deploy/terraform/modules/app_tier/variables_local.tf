@@ -49,6 +49,10 @@ locals {
   sub_web_nsg_arm_id = local.sub_web_nsg_exists ? try(local.sub_web_nsg.arm_id, "") : ""
   sub_web_nsg_name   = local.sub_web_nsg_exists ? "" : try(local.sub_web_nsg.name, "nsg-web")
 
+  sub_web_deployed = local.sub_web_defined ? (
+    local.sub_web_exists ? data.azurerm_subnet.subnet-sap-web[0] : azurerm_subnet.subnet-sap-web[0]) : (
+    local.sub_app_exists ? data.azurerm_subnet.subnet-sap-app[0] : azurerm_subnet.subnet-sap-app[0])
+
   application_sid          = try(var.application.sid, "HN1")
   enable_deployment        = try(var.application.enable_deployment, false)
   scs_instance_number      = try(var.application.scs_instance_number, "01")
