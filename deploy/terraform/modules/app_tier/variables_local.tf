@@ -42,18 +42,18 @@ locals {
   sub_web_arm_id  = local.sub_web_exists ? try(local.sub_web.arm_id, "") : ""
   sub_web_name    = local.sub_web_exists ? "" : try(local.sub_web.name, "subnet-web")
   sub_web_prefix  = local.sub_web_exists ? "" : try(local.sub_web.prefix, "10.1.5.0/24")
-  sub_web_deployed = local.sub_web_defined ? (
+  sub_web_deployed = try(local.sub_web_defined ? (
     local.sub_web_exists ? data.azurerm_subnet.subnet-sap-web[0] : azurerm_subnet.subnet-sap-web[0]) : (
-  local.sub_app_exists ? data.azurerm_subnet.subnet-sap-app[0] : azurerm_subnet.subnet-sap-app[0])
+  local.sub_app_exists ? data.azurerm_subnet.subnet-sap-app[0] : azurerm_subnet.subnet-sap-app[0]), null)
 
   # WEB NSG
   sub_web_nsg        = try(local.sub_web.nsg, {})
   sub_web_nsg_exists = try(local.sub_web_nsg.is_existing, false)
   sub_web_nsg_arm_id = local.sub_web_nsg_exists ? try(local.sub_web_nsg.arm_id, "") : ""
   sub_web_nsg_name   = local.sub_web_nsg_exists ? "" : try(local.sub_web_nsg.name, "nsg-web")
-  sub_web_nsg_deployed = local.sub_web_defined ? (
+  sub_web_nsg_deployed = try(local.sub_web_defined ? (
     local.sub_web_nsg_exists ? data.azurerm_network_security_group.nsg-web[0] : azurerm_network_security_group.nsg-web[0]) : (
-  local.sub_app_nsg_exists ? data.azurerm_network_security_group.nsg-app[0] : azurerm_network_security_group.nsg-app[0])
+  local.sub_app_nsg_exists ? data.azurerm_network_security_group.nsg-app[0] : azurerm_network_security_group.nsg-app[0]), null)
 
   application_sid          = try(var.application.sid, "HN1")
   enable_deployment        = try(var.application.enable_deployment, false)
