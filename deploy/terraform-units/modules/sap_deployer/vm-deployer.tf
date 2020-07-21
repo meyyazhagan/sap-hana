@@ -28,6 +28,14 @@ resource "azurerm_network_interface" "deployer" {
   }
 }
 
+// User defined identity for Deployer
+resource "azurerm_user_assigned_identity" "deployer" {
+  count               = length(local.deployers)
+  resource_group_name = azurerm_resource_group.deployer.name
+  location            = azurerm_resource_group.deployer.location
+  name                = format("%s%02d-msi-%s", local.deployers[count.index].name, count.index, local.postfix)
+}
+
 // Linux Virtual Machine for Deployer
 resource "azurerm_linux_virtual_machine" "deployer" {
   count                           = length(local.deployers)
@@ -52,6 +60,11 @@ resource "azurerm_linux_virtual_machine" "deployer" {
     offer     = local.deployers[count.index].os.offer
     sku       = local.deployers[count.index].os.sku
     version   = local.deployers[count.index].os.version
+  }
+
+  identity {
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.deployer[count.index].id]
   }
 
   admin_ssh_key {
